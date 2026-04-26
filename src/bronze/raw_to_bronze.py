@@ -32,7 +32,16 @@ def ensure_directory(path: Path) -> None:
 
 
 def read_csv(csv_path: Path) -> pl.DataFrame:
-    return pl.read_csv(csv_path)
+    schema_overrides = {
+        "olist_customers_dataset.csv": {"customer_zip_code_prefix": pl.Utf8},
+        "olist_geolocation_dataset.csv": {"geolocation_zip_code_prefix": pl.Utf8},
+        "olist_sellers_dataset.csv": {"seller_zip_code_prefix": pl.Utf8},
+    }
+
+    return pl.read_csv(
+        csv_path,
+        schema_overrides=schema_overrides.get(csv_path.name),
+    )
 
 
 def add_technical_metadata(df: pl.DataFrame, source_file: str) -> pl.DataFrame:
